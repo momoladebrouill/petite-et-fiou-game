@@ -3,21 +3,24 @@ import random,noise
 # Constantes :
 FPS = 60  # les fps tabernak
 WIND = 750 # dimentions de la fentere
-dep=1
+
 pg.init()
-f = pg.display.set_mode(size=(WIND, WIND))
-pg.display.set_caption("The //) game")
+f = pg.display.set_mode((WIND, WIND),pg.RESIZABLE)
+pg.display.set_caption("The /) game")
 fpsClock = pg.time.Clock()
-font = pg.font.SysFont('consolas', 30) #police//roxane
-depx,depy=0,0#la caméra
+font = pg.font.SysFont('consolas', 30) 
+
 zoom=1
 b = True
-tuiles:list=[]
+tuiles=[]
 anim=[pg.image.load("sprite//b_"+format(i,"02")+".png") for i in range(11)]
 stop=pg.image.load("sprite//assis.png")
-grav=0.4
-vitesse=5
-fond=pg.image.load("fond.png")
+
+dep=1     #la vitesse de déplacement de roger
+grav=1 #la vitesse de chute de roger
+vitesse=5 #la vitesse du plancher
+fond=pg.Surface((WIND,WIND))#pg.image.load("fond.png")
+fond.fill(0xffffff)
 width=fond.get_rect().width
 sachet=pg.image.load("crispy pix.png").convert()
 sachet=pg.transform.scale(sachet,(25,25))
@@ -31,13 +34,12 @@ class Perso:
         self.img=anim
         self.index_anim=0
         self.rect=self.img[0].get_rect()
-        self.vy=0.0
+        self.vy=0
         self.jump=False
         
     def draw(self):
         global score
         self.vy+=grav
-        self.rect=self.rect.move(0,self.vy)
         if self.rect.y+self.rect.height/2>WIND:
             self.rect.y=0
             self.vy=0
@@ -45,7 +47,7 @@ class Perso:
             self.rect.y=self.rect.height/2
             self.vy=0
         if self.jump:
-            self.vy-=15
+            self.vy=-15
             self.jump=False
         self.Assis=False
         for jacko in tuiles:
@@ -107,10 +109,8 @@ i=0
 defil1,defil2=0,width
 try:
     while b:
-        # Actualiser:
+        
         pg.display.flip()
-
-        # Appliquer les images de fond sur la fenetre
 
         text = font.render(('Score: '+str(score)), True, (0,0,0))
         textRect = text.get_rect()
@@ -126,8 +126,7 @@ try:
             tuiles.append(Sol(noise.pnoise1(i/10)*WIND/3+WIND/2))
             i+=1
             i=i%10
-        f.blit(fond, (defil1, -500))
-        f.blit(fond,(defil2,-500))
+        f.blit(fond, (0,0))
         defil1-=5
         defil2-=5
         if defil1<-width:
